@@ -10,7 +10,8 @@
             <label for="">Участники</label>
             <div class="search">
                 <input type="text" @input="searchSuggest" v-model="suggestValue">
-                <p v-for="(suggest, i) in suggested" :key="i" @click="addMember(suggest)" class="suggest">{{ suggest.firstName + " " + suggest.lastName }}</p>
+                <p v-for="(suggest, i) in suggested" :key="i" @click="addMember(suggest)" class="suggest">{{
+                    suggest.firstName + " " + suggest.lastName }}</p>
             </div>
             <div class="members" v-if="members.length">
                 <ul>
@@ -27,10 +28,15 @@
                 <option v-for="(option, i) in options" :key="i" :value="option">{{ option }}</option>
             </select>
         </div>
-        <button @click="makeReport">Сделать отчёт</button><br/>
+        <div class="form-row">
+            <label for="">Скрины</label>
+            <input @change="onFileChanged" type="file">
+        </div>
+        <button @click="makeReport">Сделать отчёт</button><br />
         <div class="result-wrapper" v-if="result.length">
-            <span class="result" v-for="res in result">{{ res }}<br/></span>
+            <span class="result" v-for="res in result">{{ res }}<br /></span>
             <button @click="copyReport">Скопировать Отчёт</button>
+            <button @click="sendReport">Отправить отчёт</button>
         </div>
     </section>
 </template>
@@ -47,61 +53,62 @@ const members = ref([])
 const options = ref(["Патруль", "Захват точек", "Допрос гуля", "Захват конвоя", "Обучение студента"])
 const selected = ref(options[0])
 const result = ref([])
+const files = ref([])
 
 const ccgs = [
-  { firstName: "Arumanfi", lastName: "Miura" },
-  { firstName: "Anko", lastName: "Koshi" },
-  { firstName: "Сасаке", lastName: "Хайсе" },
-  { firstName: "Клэр", lastName: "Нишияма" },
-  { firstName: "Джузо", lastName: "Сузуя" },
-  { firstName: "Куки", lastName: "Урие" },
-  { firstName: "Yuutsure", lastName: "Kasune" },
-  { firstName: "Рейнхард", lastName: "Рудель" },
-  { firstName: "Сайко", lastName: "Йонебояши" },
-  { firstName: "Hiroto", lastName: "Takahashi" },
-  { firstName: "Kiyotaka", lastName: "Ayanokoji" },
-  { firstName: "Kurosaki", lastName: "Tatchitochibara" },
-  { firstName: "Maybe", lastName: "Eren" },
-  { firstName: "Morsik", lastName: "Mori" },
-  { firstName: "Renzo", lastName: "Toriami" },
-  { firstName: "Senesha", lastName: "Tanaka" },
-  { firstName: "Shigimo", lastName: "Kasiri" },
-  { firstName: "Yukio", lastName: "Hashikawa" },
-  { firstName: "Сато", lastName: "Хинин" },
-  { firstName: "Ayato", lastName: "Kirigiri" },
-  { firstName: "Aki", lastName: "Sao" },
-  { firstName: "Cota", lastName: "Cimada" },
-  { firstName: "Elric", lastName: "Kurai" },
-  { firstName: "Hughie", lastName: "Zerkinot" },
-  { firstName: "Iber", lastName: "Bure" },
-  { firstName: "Kaylo", lastName: "Fugashima" },
-  { firstName: "Kugashira", lastName: "Thachibana" },
-  { firstName: "Lashandr", lastName: "Chieffo" },
-  { firstName: "Manato", lastName: "Onishi" },
-  { firstName: "Nipa", lastName: "Reqooqi" },
-  { firstName: "Tadao", lastName: "Imada" },
-  { firstName: "Tanao", lastName: "Akuki" }
+    { firstName: "Arumanfi", lastName: "Miura" },
+    { firstName: "Anko", lastName: "Koshi" },
+    { firstName: "Сасаке", lastName: "Хайсе" },
+    { firstName: "Клэр", lastName: "Нишияма" },
+    { firstName: "Джузо", lastName: "Сузуя" },
+    { firstName: "Куки", lastName: "Урие" },
+    { firstName: "Yuutsure", lastName: "Kasune" },
+    { firstName: "Рейнхард", lastName: "Рудель" },
+    { firstName: "Сайко", lastName: "Йонебояши" },
+    { firstName: "Hiroto", lastName: "Takahashi" },
+    { firstName: "Kiyotaka", lastName: "Ayanokoji" },
+    { firstName: "Kurosaki", lastName: "Tatchitochibara" },
+    { firstName: "Maybe", lastName: "Eren" },
+    { firstName: "Morsik", lastName: "Mori" },
+    { firstName: "Renzo", lastName: "Toriami" },
+    { firstName: "Senesha", lastName: "Tanaka" },
+    { firstName: "Shigimo", lastName: "Kasiri" },
+    { firstName: "Yukio", lastName: "Hashikawa" },
+    { firstName: "Сато", lastName: "Хинин" },
+    { firstName: "Ayato", lastName: "Kirigiri" },
+    { firstName: "Aki", lastName: "Sao" },
+    { firstName: "Cota", lastName: "Cimada" },
+    { firstName: "Elric", lastName: "Kurai" },
+    { firstName: "Hughie", lastName: "Zerkinot" },
+    { firstName: "Iber", lastName: "Bure" },
+    { firstName: "Kaylo", lastName: "Fugashima" },
+    { firstName: "Kugashira", lastName: "Thachibana" },
+    { firstName: "Lashandr", lastName: "Chieffo" },
+    { firstName: "Manato", lastName: "Onishi" },
+    { firstName: "Nipa", lastName: "Reqooqi" },
+    { firstName: "Tadao", lastName: "Imada" },
+    { firstName: "Tanao", lastName: "Akuki" }
 ]
 
 function searchSuggest() {
-  suggested.value = []
-  if (suggestValue.value == "") return
+    suggested.value = []
+    if (suggestValue.value == "") return
 
-  ccgs.forEach(person => {
-    if (
-      person.firstName.toLocaleLowerCase().startsWith(suggestValue.value.toLocaleLowerCase()) ||
-      person.lastName.toLocaleLowerCase().startsWith(suggestValue.value.toLocaleLowerCase())
-    ) {
-      suggested.value.push(person)
-    }
-  })
+    ccgs.forEach(person => {
+        if (
+            person.firstName.toLocaleLowerCase().startsWith(suggestValue.value.toLocaleLowerCase()) ||
+            person.lastName.toLocaleLowerCase().startsWith(suggestValue.value.toLocaleLowerCase())
+        ) {
+            suggested.value.push(person)
+        }
+    })
 }
-function copyReport(){
+function copyReport() {
     navigator.clipboard.writeText(result.value)
 }
 
-function addMember(member){
-    if(members.value.includes(member)) return
+function addMember(member) {
+    if (members.value.includes(member)) return
 
     members.value.push(member)
 
@@ -111,7 +118,7 @@ function deleteMember(id) {
     members.value.splice(id, 1)
 }
 
-function normilizeMembers(){
+function normilizeMembers() {
     const res = []
     members.value.forEach((item) => {
         res.push(item.firstName + " " + item.lastName)
@@ -120,7 +127,7 @@ function normilizeMembers(){
     return res
 }
 
-function makeReport(){
+function makeReport() {
     result.value = []
 
     let normalMembers = normilizeMembers()
@@ -142,6 +149,62 @@ function makeReport(){
 
 }
 
+function onFileChanged(e){
+    files.value.push(e.target.files[0])
+    console.log("push")
+    console.log(files.value)
+}
+
+async function uploadFileToDiscord(text, webhookURL) {
+    const formData = new FormData();
+
+    files.value.forEach((file,index) => {
+        console.log("iter")
+        formData.append(`file${index+1}`, file)})
+    // formData.append("file", files.value[0])
+    formData.append('payload_json', JSON.stringify({ content: text }));
+
+    try {
+        const response = await fetch(webhookURL, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to upload image (HTTP ${response.status}): ${response.statusText}`);
+        }
+
+        const responseData = await response.json();
+        const imageUrl = responseData.attachments[0].url;
+        return imageUrl;
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        throw new Error('Error uploading image to Discord.');
+    }
+}
+
+
+async function sendReport() {
+    const webhookURL = 'https://ptb.discord.com/api/webhooks/1268201430032977920/e_zaiyQ7_ugrxDkpwkuXXspvSqqchoitCnqd6ijxP_d_T8TNCKv903774KmjC_OpRGi4';
+
+
+    const text = result.value.join(""); 
+ 
+
+    try {
+        uploadFileToDiscord(text, webhookURL);
+        console.log("ura")
+    } catch (error) {
+        console.error('Error uploading image:', error);
+    }
+
+}
+
+
+
+
+
+
 onMounted(() => {
     console.log(eventsData["Допрос гуля"])
 })
@@ -157,29 +220,29 @@ onMounted(() => {
 }
 
 
-li{
+li {
     display: flex;
     align-items: center;
     gap: 20px;
     list-style: none;
 }
 
-.result{
+.result {
     text-align: left;
 }
 
-li > button{
+li>button {
     height: 40px;
 }
 
-.result-wrapper > button{
+.result-wrapper>button {
     margin-top: 0 auto;
     margin-top: 20px;
     display: flex;
     justify-content: center;
 }
 
-section{
+section {
     margin: 0 auto;
     margin-top: 200px;
     gap: 10px;
@@ -191,12 +254,12 @@ section{
     width: 100%;
 }
 
-.suggest{
+.suggest {
     /* background-color: #1a1a1a; */
     cursor: pointer;
 }
 
-input{
+input {
     background-color: #1a1a1a;
     color: #ffffff;
     border: 1px solid #333333;
@@ -207,13 +270,13 @@ input{
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-input:focus{
+input:focus {
     border-color: #4a90e2;
     box-shadow: 0 0 5px rgba(74, 144, 228, 0.5);
     outline: none;
 }
 
-select{
+select {
     background-color: #1a1a1a;
     color: #ffffff;
     border: 1px solid #333333;
@@ -228,16 +291,14 @@ select{
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-select:focus{
+select:focus {
     border-color: #4a90e2;
     box-shadow: 0 0 5px rgba(74, 144, 228, 0.5);
     outline: none;
 }
 
-option{
+option {
     background-color: #1a1a1a;
     color: #ffffff;
 }
-
-
 </style>
