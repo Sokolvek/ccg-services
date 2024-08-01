@@ -15,8 +15,7 @@
 
 <script setup>
 
-import MainPage from "./pages/MainPage.vue";
-import CreateReport from "./components/CreateReport.vue";
+
 import { RouterView } from "vue-router";
 
 </script>

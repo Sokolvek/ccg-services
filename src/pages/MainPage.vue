@@ -4,8 +4,8 @@
             <img src="../assets/imgs/test.svg" alt="">
         </div>
         <div class="buttons-wrapper">
-            <!-- <button>База данных гулей</button> -->
             <button @click="router.push('/ccg-services/create-report')">Сделать Отчёт</button>
+            <button @click="router.push('/ccg-services/ghouls-base')">База данных гулей</button>
             <!-- <button></button> -->
         </div>
     </section>
@@ -19,20 +19,12 @@ import { useRouter } from 'vue-router';
 const router = useRouter()
 
 onMounted(() => {
-    const request = new XMLHttpRequest();
-    request.open("POST","https://ptb.discord.com/api/webhooks/1267978280796033106/XJKgtTCi8oKYIMrhRYNHCBBevOv7S7IUziYrHnF1wRUBBAE5_wL9-VFK4DRTHi8PUBbs")
-    request.setRequestHeader('Content-type', 'application/json');
-    const params = {
-    username: "My Webhook Name",
-    avatar_url: "",
-    content: "The message to send"
-    }
-    request.send(JSON.stringify(params));
+   
 })
 
 </script>
 
-<style>
+<style scoped>
 
 .img-wrapper{
     position: absolute;
