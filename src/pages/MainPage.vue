@@ -6,7 +6,7 @@
         <div class="buttons-wrapper">
             <button @click="router.push('/ccg-services/create-report')">Сделать Отчёт</button>
             <button @click="router.push('/ccg-services/ghouls-base')">База данных гулей</button>
-            <!-- <button></button> -->
+            <button @click="router.push('/ccg-services/knowledge-base')">База знаний</button>
         </div>
     </section>
 </template>
@@ -41,7 +41,7 @@ onMounted(() => {
     flex-direction: column;
     gap: 30px;
     position: absolute;
-    bottom: 40%;
+    bottom: 30%;
     left: 50%;
     transform: translateX(-50%);
 }

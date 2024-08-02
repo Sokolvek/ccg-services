@@ -4,6 +4,7 @@ import CreateReport from "./pages/CreateReport.vue"
 import MainPage from "./pages/MainPage.vue"
 import GhoulsBase from "./pages/GhoulsBase.vue"
 import GhoulPage from "./pages/GhoulPage.vue"
+import KnowledgeBase from "./pages/KnowledgeBase.vue"
 const baseUrl = "/ccg-services"
 
 export const router = createRouter({
@@ -25,6 +26,10 @@ export const router = createRouter({
         {
             path:`${baseUrl}/ghouls-base/ghoul`,
             component:GhoulPage
+        },
+        {
+            path:`${baseUrl}/knowledge-base`,
+            component:KnowledgeBase
         }
     ]
 })
