@@ -10,12 +10,14 @@
             <label for="">Участники</label>
             <div class="search">
                 <input type="text" @input="searchSuggest" v-model="suggestValue">
+                <div class="suggest-wrapp">
                 <p v-for="(suggest, i) in suggested" :key="i" @click="addMember(suggest)" class="suggest">{{
                     suggest.firstName + " " + suggest.lastName }}</p>
+                </div>
             </div>
             <div class="members" v-if="members.length">
                 <ul>
-                    <li v-for="(member, i) in members" :key="i">
+                    <li class="member-item" v-for="(member, i) in members" :key="i">
                         <p>{{ member.firstName + " " + member.lastName }}</p>
                         <button @click.prevent="deleteMember(i)">-</button>
                     </li>
@@ -35,6 +37,11 @@
         <button @click="makeReport">Сделать отчёт</button><br />
         <div class="result-wrapper" v-if="result.length">
             <span class="result" v-for="res in result">{{ res }}<br /></span>
+            <div class="previews-wrapper">
+                <div class="preview" v-for="image in previewsUrl">
+                    <img :src=image alt="">
+                </div>
+            </div>
             <button @click="copyReport">Скопировать Отчёт</button>
             <button @click="sendReport">Отправить отчёт</button>
         </div>
@@ -54,6 +61,7 @@ const options = ref(["Патруль", "Захват точек", "Допрос 
 const selected = ref(options[0])
 const result = ref([])
 const files = ref([])
+const previewsUrl = []
 
 const ccgs = [
     { firstName: "Arumanfi", lastName: "Miura" },
@@ -152,7 +160,8 @@ function makeReport() {
 function onFileChanged(e){
     files.value.push(e.target.files[0])
     console.log("push")
-    console.log(files.value)
+    previewsUrl.push(URL.createObjectURL(e.target.files[0]))
+    console.log(e.target.files[0])
 }
 
 async function uploadFileToDiscord(text, webhookURL) {
@@ -219,6 +228,9 @@ onMounted(() => {
     gap: 10px;
 }
 
+.member-item{
+    justify-content: space-between;
+}
 
 li {
     display: flex;
@@ -233,6 +245,22 @@ li {
 
 li>button {
     height: 40px;
+}
+
+
+.preview{
+    width: 300px;
+}
+
+.preview > img{
+    width: 100%;
+}
+
+.previews-wrapper{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
 }
 
 .result-wrapper>button {
